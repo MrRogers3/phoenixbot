@@ -3,7 +3,6 @@ project(gorgon_node)
 
 find_package(catkin REQUIRED COMPONENTS
   rospy
-  rospy
   std_msgs
   message_generation
 )
