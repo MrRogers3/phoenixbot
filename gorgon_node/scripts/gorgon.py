@@ -21,4 +21,5 @@ if __name__ == "__main__":
 rospy.spin()
 
 #Create message to controll individual motor
+xxx
 
