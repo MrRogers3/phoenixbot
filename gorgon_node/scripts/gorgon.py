@@ -1,25 +1,24 @@
 #!/usr/bin/env python
 import rospy
-from gorgon_node.msg import custom
+from trajectory_msgs.msg import JointTrajectory
+from std_msgs.msg import Empty
 
-def sendToGorgon(string):
-	rospy.loginfo("Tx: " + str(string))
-
-def setSpeed(message):
-	value = int(((message.speed+1)/2.0)*255)
-	sendToGorgon("M " + str(message.MotorID) + " " + str(value))
-
+def sequence(message):
+	name = []
+	msg.joint_name = name
+	msg.points.positions = []
 
 if __name__ == "__main__":
     # Entry point
     rospy.init_node('gorgon_node')
 
+    msg = JointTrajectory()
+ 
+    trajectory = rospy.Publisher("arms_command", JointTrajectory, qeue_size=1)
+    rospy.Subscriber("trigger_arm_seq", Empty, sequence) 
     rate = rospy.Rate(10) # 10hz
-    rospy.Subscriber("Motor_speed",custom, setSpeed)
     while not rospy.is_shutdown():
-	rate.sleep()
 rospy.spin()
 
-#Create message to controll individual motor
-xxx
+
 
