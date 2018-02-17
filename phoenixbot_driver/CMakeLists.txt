@@ -6,7 +6,7 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
     hardware_interface
     controller_manager
-    serial
+#    serial
 )
 
 catkin_package()
@@ -16,10 +16,10 @@ include_directories(
     include
 )
 
-add_executable(phoenixbot_driver src/phoenixbot_driver.cpp src/PhoenixbotInterface.cpp)
-add_dependencies(phoenixbot_driver ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_executable(phoenixbot_driver src/phoenixbot_driver.cpp src/PhoenixbotInterface.cpp)
+#add_dependencies(phoenixbot_driver ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-target_link_libraries(phoenixbot_driver
-    ${catkin_LIBRARIES}
-)
+#target_link_libraries(phoenixbot_driver
+#    ${catkin_LIBRARIES}
+#)
 
