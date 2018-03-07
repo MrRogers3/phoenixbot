@@ -46,7 +46,7 @@ Aruco::~Aruco() {
  * Class for detecting Aruco markers and getting Pose Estimation
  *
  */
-cv::Mat Aruco::getFrame() {
+cv::Mat Aruco::getFrame(String topicName) {
         cv::Mat mt;
         if (!this->camera.isOpened()) {
                 std::cout << "Camera is not opened, returning empty mat" << std::endl;
@@ -430,9 +430,30 @@ void Aruco::setArucoMarkerSize(float sizeInMeters) {
  *
  */
 bool Aruco::openCamera() {
+/*
         std::cout << "Opening Camera" << std::endl;
         if (this->camera.isOpened())
                 return true;
         // Camera 1 is the default
         return this->camera.open(1);
+*/
+	std::cout << "Opening Camera" << std::endl;
+	ros::init("image_listener");
+	ros::NodeHandle nh;
+	image_transport::ImageTransport it(nh);
+	image_transport::Subscriber subF = it.subscribe("camera/front", 1, imageCallback);
+	image_transport::Subscriber subR = it.subscribe("camera/rear", 1, imageCallback);
+}
+
+void imageCallback(const sensor_msgs::ImageConstPtr& msg)
+{
+  try
+  {
+    cv::imshow("view", cv_bridge::toCvShare(msg, "bgr8")->image);
+    cv::waitKey(30);
+  }
+  catch (cv_bridge::Exception& e)
+  {
+    ROS_ERROR("Could not convert from '%s' to 'bgr8'.", msg->encoding.c_str());
+  }
 }

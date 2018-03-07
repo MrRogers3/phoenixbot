@@ -17,6 +17,9 @@
 #include <opencv2/videoio.hpp>
 #include <string>
 #include <unistd.h>
+#include <cv_bridge/cv_bridge.h>
+#include <image_transport/image_transport.h>
+#include <ros/ros.h>
 
 class Aruco {
 public:
@@ -67,6 +70,7 @@ void calculateChessBoardPosition(std::vector<cv::Point3f> &vec);
 bool vectorContains(std::vector<int> vec, int val);
 void calculateChessBoardCornersFromImages(
         std::vector<std::vector<cv::Point2f> > &foundCorners);
+void imageCallback(const sensor_msgs::ImageConstPtr& msg);
 };
 
 #endif
