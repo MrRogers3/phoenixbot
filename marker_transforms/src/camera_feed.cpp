@@ -15,11 +15,11 @@ int main(int argc, char** argv)
   ros::NodeHandle nh;
   image_transport::ImageTransport feed(nh);
   image_transport::Publisher pubF = feed.advertise("camera/front", 1);
-  image_transport::Publisher pubR = feed.advertise("camera/rear", 1);
+  //image_transport::Publisher pubR = feed.advertise("camera/rear", 1);
 
   // Convert the passed as command line parameter index for the video device to an integer
   std::istringstream video_sourceCmd(argv[1]);
-  int video_source;
+  int video_source = 0;
 
   // Check if it is indeed a number
   if(!(video_sourceCmd >> video_source)) {
@@ -37,7 +37,7 @@ int main(int argc, char** argv)
 
   cv::Mat frame;
   sensor_msgs::ImagePtr msgF;
-  sensor_msgs::ImagePtr msgR;
+  //sensor_msgs::ImagePtr msgR;
 
   ros::Rate loop_rate(5);
   while (nh.ok()) {
@@ -45,9 +45,9 @@ int main(int argc, char** argv)
     // Check if grabbed frame is actually full with some content
     if(!frame.empty()) {
       msgF = cv_bridge::CvImage(std_msgs::Header(), "bgr8", frame).toImageMsg();
-      msgR = cv_bridge::CvImage(std_msgs::Header(), "bgr8", frame).toImageMsg();
+      //msgR = cv_bridge::CvImage(std_msgs::Header(), "bgr8", frame).toImageMsg();
       pubF.publish(msgF);
-      pubR.publish(msgR);
+      //pubR.publish(msgR);
       cv::waitKey(1);
     }
 

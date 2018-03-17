@@ -445,7 +445,7 @@ bool Aruco::openCamera() {
 	image_transport::Subscriber subR = it.subscribe("camera/rear", 1, imageCallback);
 }
 
-void imageCallback(const sensor_msgs::ImageConstPtr& msg)
+void Aruco::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
   try
   {
