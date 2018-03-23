@@ -17,12 +17,12 @@
 
 tf2::Quaternion *convertToQuaternion(double rotx, double roty, double rotz);
 
-int main(int argc, char **argv) {
-        ros::init(argc, argv, "marker_transforms");
-        ros::NodeHandle n;
-        ros::Rate loop_rate(10);
-        static tf2_ros::TransformBroadcaster br;
-        geometry_msgs::TransformStamped transformStamped;
+int main(int argc, char **argv) { //A standard set up for C++. argc is Argument Counts and argv is Argument Vector.
+        ros::init(argc, argv, "marker_transforms"); //Standard initiation of a node in C++
+        ros::NodeHandle n; //Creating an object representing the node that was just created
+        ros::Rate loop_rate(10); 
+        static tf2_ros::TransformBroadcaster br; //Creating a data type TransformBroadcaster named "br"
+        geometry_msgs::TransformStamped transformStamped; //Creating a data type transformStamped named "transformStamped"
         std::vector<geometry_msgs::TransformStamped> transforms;
         Aruco *arucoDetector = new Aruco(0);
         if (!arucoDetector->openCamera()) {
@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
                                 q = nullptr;
                         }
                 }
-                br.sendTransform(transforms);
+                br.sendTransform(transforms); //Sending transformation info to br.
                 transforms.clear();
                 ros::spinOnce();
                 loop_rate.sleep();

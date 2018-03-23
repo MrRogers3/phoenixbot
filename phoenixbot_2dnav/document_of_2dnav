@@ -1,0 +1,7 @@
+phoenixbot_nav.launch
+
+What are <group...> params and what does it do?
+What is <remap...>? What are the params?
+
+
+Ln10: <group if="$(eval map == '')"> and <group unless="$(eval map == '')">?

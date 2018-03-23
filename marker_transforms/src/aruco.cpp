@@ -21,7 +21,7 @@ Aruco::Aruco(int dictionaryId) {
         } else {
                 this->dictionary = cv::aruco::getPredefinedDictionary(
                         cv::aruco::PREDEFINED_DICTIONARY_NAME(this->dictionaryId));
-        }
+        } //set numbers of bits and markers from a pre-made dictionary.
         this->detectorParams = cv::aruco::DetectorParameters::create();
         //this->detectorParams->doCornerRefinement = true;
         if (!this->setCameraCalibration(
@@ -65,7 +65,7 @@ cv::Mat Aruco::getFrame() {
  */
 bool Aruco::setCameraCalibration(std::string filename) {
         std::string fname = this->calibrationFilePath + filename;
-        if (access(fname.c_str(), F_OK) == -1)
+        if (access(fname.c_str(), F_OK) == -1) //access(name,amode) return -1 if the path to the file does not exist. c_str() convert string into null terminated string (another format for string). amode is what kind of check I want from a pre-define list R_OK,W_OK,X_OK. F_OK check for existence of the path.
                 return false;
         this->currentCalibrationFile = filename;
         return this->readCameraCalibration(filename);
@@ -78,14 +78,14 @@ bool Aruco::setCameraCalibration(std::string filename) {
  *
  */
 bool Aruco::readCameraCalibration(std::string filename) {
-        cv::FileStorage fs(filename, cv::FileStorage::READ);
+        cv::FileStorage fs(filename, cv::FileStorage::READ); //To read an existed XML,YAML file
         if (!fs.isOpened())
                 return false;
-        fs["camera_matrix"] >> this->cameraMatrix;
-        fs["distortion_coefficients"] >> this->distortionCoefficients;
-        fs.release();
+        fs["camera_matrix"] >> this->cameraMatrix; //There is a matrix values under the name "camera_matrix". This line transfer those values into cameraMatrix.
+        fs["distortion_coefficients"] >> this->distortionCoefficients; // ^^
+        fs.release(); //Deconstruct the object.
         return true;
-}
+} //Example https://docs.opencv.org/2.4/modules/core/doc/xml_yaml_persistence.html
 
 /*
  * Get Custom Dictionary
@@ -103,7 +103,7 @@ bool Aruco::setDictionary(int dictionaryId) {
                         cv::aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
                 return true;
         }
-}
+} //Methode to change dictionary. Refer to Ln:19-24.
 /*
  * Get Custom Dictionary
  *
@@ -120,7 +120,7 @@ bool Aruco::getCustomDictionary() {
         fs["MaxCorrectionBits"] >> maxCorrectionBits;
         fs["BytesList"] >> bytesList;
         this->dictionary =
-                new cv::aruco::Dictionary(bytesList, markerSize, maxCorrectionBits);
+                new cv::aruco::Dictionary(bytesList, markerSize, maxCorrectionBits); //Creation of new dictionary.
         return true;
 }
 
@@ -131,8 +131,8 @@ bool Aruco::getCustomDictionary() {
  * a value
  *
  */
-bool Aruco::vectorContains(std::vector<int> vec, int val) {
-        if (find(vec.begin(), vec.end(), val) != vec.end())
+bool Aruco::vectorContains(std::vector<int> vec, int val) { //std::vector<> works like an array but can change size dymanically.
+        if (find(vec.begin(), vec.end(), val) != vec.end()) //find(first, last, val) check if the val exist within the given range [first,last). Will return the the first existed element that is the same as val. If not found, will retrun the last element.
                 return true;
         return false;
 }
@@ -151,7 +151,7 @@ std::vector<double> Aruco::getPose(int arucoId, cv::Mat *frame) {
         std::vector<double> rottransvec;
 
         // Camera Calibration Failed...No files?
-        if ((cameraMatrix.empty() || cv::countNonZero(cameraMatrix) < 1) ||
+        if ((cameraMatrix.empty() || cv::countNonZero(cameraMatrix) < 1) || //countNonZero(name) return number of non-zero elements in name.
             (distortionCoefficients.empty() ||
              cv::countNonZero(distortionCoefficients) < 1)) {
                 std::cout << "Could not get the pose, no callibration" << std::endl;
@@ -161,24 +161,24 @@ std::vector<double> Aruco::getPose(int arucoId, cv::Mat *frame) {
         cv::Mat img = this->getFrame();
 
         std::vector<int> ids;
-        std::vector<std::vector<cv::Point2f> > corners, rejected;
-        std::vector<cv::Vec3d> rvecs, tvecs;
+        std::vector<std::vector<cv::Point2f> > corners, rejected; //Point2f consist of coordinate point of x and y. The "f" after Point2 is clarification that those coordinates are float values. "d" is double and "i" is int.
+        std::vector<cv::Vec3d> rvecs, tvecs; //Look up cv::Vec3d. rvecs is rotational vector. tvecs is translational vector.
 
         // detect markers and estimate pose
         cv::aruco::detectMarkers(img, this->dictionary, corners, ids, detectorParams,
-                                 rejected);
+                                 rejected); //detectMarkers(...) reads from img, dictionary, and ids. Stores values in corners, detectorParams, and rejected. For more details: https://docs.opencv.org/3.4.0/d5/dae/tutorial_aruco_detection.html
         if (ids.size() > 0 && this->vectorContains(ids, arucoId)) {
                 cv::aruco::estimatePoseSingleMarkers(corners, this->arucoSquareSize,
                                                      cameraMatrix, distortionCoefficients,
-                                                     rvecs, tvecs);
+                                                     rvecs, tvecs); //estimate of what a marker would look like in camera. Params:(corners, markerLength, cameraMatrix, distortionCoefficients, rvecs, tvecs)
 
                 size_t index = find(ids.begin(), ids.end(), arucoId) - ids.begin();
 
                 cv::Vec3d translation = tvecs[index];
                 cv::Vec3d rotation = rvecs[index];
                 rottransvec.clear(); // Clear all of the zero
-                for (size_t i = 0; i < translation.rows; i++) {
-                        rottransvec.push_back(translation[i]);
+                for (size_t i = 0; i < translation.rows; i++) { //size_t is unsigned integer
+                        rottransvec.push_back(translation[i]); //push_back(val) add val to the end of the vector.
                 }
 
                 for (size_t i = 0; i < rotation.rows; i++) {
@@ -186,7 +186,7 @@ std::vector<double> Aruco::getPose(int arucoId, cv::Mat *frame) {
                 }
         }
         return rottransvec;
-}
+} //return rotational and translational vectors of a marker.
 
 /*
  * Markers in View
@@ -198,7 +198,7 @@ std::vector<int> Aruco::arucoMarkersInView(cv::Mat *frame) {
         std::vector<int> ids;
         std::vector<std::vector<cv::Point2f> > corners, rejected;
         cv::Mat img;
-        if (frame == nullptr) {
+        if (frame == nullptr) { //nullptr is a null for pointer
                 // if (!this->m_camDevice->isOpen())
                 if (!this->camera.isOpened())
                         if (!this->openCamera())
@@ -212,7 +212,7 @@ std::vector<int> Aruco::arucoMarkersInView(cv::Mat *frame) {
                                  rejected);
 
         return ids;
-}
+} // return all ids currently in veiw of camera.
 
 /*
  * Marker corners in view
@@ -238,7 +238,7 @@ Aruco::arucoMarkerCorners(cv::Mat *frame) {
                                  rejected);
 
         return corners;
-}
+} //return all conrners of markers currently in view of camera.
 
 /*
  * Marker In View
@@ -265,7 +265,7 @@ bool Aruco::arucoMarkerInView(int arucoId, cv::Mat *frame) {
                 return true;
         return false;
 }
-
+//Number 10
 /*
  * Calculate Chess Board Position
  *
@@ -277,7 +277,7 @@ void Aruco::calculateChessBoardPosition(std::vector<cv::Point3f> &corners) {
                 for (size_t j = 0; j < (size_t) this->chessBoardDimensions.width; j++) {
                         // X = j * square size, Y = i * square size, Z = 0.0
                         corners.push_back(cv::Point3f(j * this->chessBoardSquareSize,
-                                                      i * this->chessBoardSquareSize, 0.0f));
+                                                      i * this->chessBoardSquareSize, 0.0f)); //Point3f consist of coordinate points of x, y, and z. "f" means float. "d" is double and "i" is int.
                 }
         }
 }
@@ -291,10 +291,10 @@ void Aruco::calculateChessBoardPosition(std::vector<cv::Point3f> &corners) {
 void Aruco::calculateChessBoardCornersFromImages(
         std::vector<std::vector<cv::Point2f> > &foundCorners) {
         for (std::vector<cv::Mat>::iterator iter = this->images.begin();
-             iter != this->images.end(); iter++) {
+             iter != this->images.end(); iter++) { //Works the same way as for-each in java but with more control.The std::vector<cv::Mat>::iterator iter makes iter an iterator for cv::Mat data type.
                 std::vector<cv::Point2f> pointBuf;
                 bool chessBoardFound = findChessboardCorners(
-                        *iter, this->chessBoardDimensions, pointBuf, this->chessBoardFlags);
+                        *iter, this->chessBoardDimensions, pointBuf, this->chessBoardFlags); //findChessboardCorners(image, patternSize, corners, flags) image is the source of what we are trying to find corners in. Pattern size contain info about number of inner corners per row and column. Corners is the output corners. Flag is the type of operation, there are 4 types. Look it up.
                 if (chessBoardFound) {
                         foundCorners.push_back(pointBuf);
                 }
@@ -318,7 +318,7 @@ void Aruco::getImagesFromCamera() {
         if (!this->camera.isOpened())
                 if (!this->openCamera())
                         return;
-        usleep(5 * 1000000);
+        usleep(5 * 1000000); //Put to sleep for x microseconds
         while (true) {
                 // TODO Setup using LibWallaby Camera
                 // if (!this->inputVideo.read(frame))
@@ -333,7 +333,7 @@ void Aruco::getImagesFromCamera() {
                         return;
                 if (found) {
                         cv::Mat temp;
-                        frame.copyTo(temp);
+                        frame.copyTo(temp); //Deep copy matrix from one to another.
                         this->images.push_back(temp);
                         // TODO Display to User to positon for next Frame...
                         usleep(5 * 1000);
@@ -355,14 +355,14 @@ bool Aruco::calibrate(std::vector<cv::Mat> images) {
         this->calculateChessBoardCornersFromImages(imageSpacePoints);
         std::vector<std::vector<cv::Point3f> > worldCornerPoints(1);
         this->calculateChessBoardPosition(worldCornerPoints[0]);
-        worldCornerPoints.resize(imageSpacePoints.size(), worldCornerPoints[0]);
+        worldCornerPoints.resize(imageSpacePoints.size(), worldCornerPoints[0]); //resize worldCornerPoints to be as big as the size of imageSpacePoints and fill the empy spots with copies of worldCornerPoints[0]
 
         std::vector<cv::Mat> rVecs, tVecs;
         this->distortionCoefficients = cv::Mat::zeros(8, 1, CV_64F);
         // Performs the Calibration
         calibrateCamera(worldCornerPoints, imageSpacePoints,
                         this->chessBoardDimensions, this->cameraMatrix,
-                        this->distortionCoefficients, rVecs, tVecs);
+                        this->distortionCoefficients, rVecs, tVecs); //It's long. Look it up.
         if (this->saveCalibration())
                 return true;
         else
@@ -381,11 +381,12 @@ bool Aruco::saveCalibration() {
         cv::FileStorage fs(fname, cv::FileStorage::WRITE);
         if (!fs.isOpened())
                 return false;
-        time_t tm;
-        time(&tm);
-        struct tm *t2 = localtime(&tm);
+        time_t tm; //time_t is a data type use to represent time.
+        time(&tm); //Get current today time (in seconds) and stored it in tm.
+        struct tm *t2 = localtime(&tm); //set t2 to stored current date. localtime(&tm) return date and the specified time of the day (tm).
+	//Exmaple: http://www.cplusplus.com/reference/ctime/time/
         char buf[1024];
-        strftime(buf, sizeof(buf), "%c", t2);
+        strftime(buf, sizeof(buf), "%c", t2); // strtime(ptr, maxsize, format, timeptr) This function copies and stores calendar time of timeptr into ptr in specified format (look it up). Maxsize limits number of char that can be copy into ptr.
 
         fs << "calibration_time" << buf;
         fs << "camera_matrix" << this->cameraMatrix;

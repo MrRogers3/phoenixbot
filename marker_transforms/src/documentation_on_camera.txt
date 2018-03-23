@@ -1,0 +1,50 @@
+aruco.cpp
+
+what is cv::Ptr<T> and how to use them?
+what is Mat and how to use them?
+what is a stream and <<,>>?
+How do I know which dictionary to use?
+What and when are the use for & and *?
+Why are corners and rejects are std::vector<std::vector<>>?
+When to use std::vector<stud::vector<>>?
+
+Ln16,22: Where are dictionaryId, dictionary, and detectorParams declared?     
+Ln23: Why is int the param of PREDEFINED_DICTIONARY_NAME?
+Ln25: What does cv::aruco::DetectorParameters::create() do?
+Ln51: Where is camera and isOpened() declared? Why (!this->camera.isOpened())?
+Ln66: Why filename when you use path?
+Ln80: What would be written in XML/YAML file?
+Ln116: Where is this->customDirectoryFile declared?
+Ln134: Why std::vector<> and not just vecot<>? What other things need std::?
+Ln150: Why does frame be a pointer?
+Ln154: Where is cameraMatrix declared?
+Ln168: Where is detectorParams declared?
+Ln171: Why cv::aruco::estimatePoseSingleMarkers()? Is there other options?
+Ln175: Why does this return index?
+Ln180: vector.rows?
+Ln203-204: How does that work?
+Ln221: Is that a mistake?
+Ln276: Where is chessBoardDimensions declared?
+Ln279: Why cv::Point3f(...)? Is that type casting? Isn't the params for Point3 are x, y, z? Why 0.0f?
+Ln293: What is image.begin() to image.end() looks like?
+Ln313: cv::Mat::eye(...)It returns matrix identity, but what is matrix identity? And how many types are there?
+Ln332: What for?
+Ln335-337: Why the round about way?
+Ln356: What is worldCornerPoints()?
+Ln361: cv::Mat::zero() it returns zero array. What is that?
+Ln363: How does it work? Isn't there more params than that?
+Ln405: How do I know what to put in the param?
+
+amera_aruco.cpp
+
+Ln23: Is "loop_rate" just a made up name?
+Ln24: Why static?
+Ln33: What is the use of ->?
+Ln34: What is "auto"?
+Ln36: Why that condition?
+Ln38: Is "world" a made up name on spot?
+Ln50-51: Why delet(q) and q = nullptr?
+
+
+
+
